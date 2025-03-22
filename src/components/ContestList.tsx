@@ -11,9 +11,9 @@ import { Contest } from '../types/contest';
 import { isUpcoming, isPast, getContestStatus } from '../utils/timeUtils';
 
 const CONTESTS_PER_PAGE = 12;
-const CARD_WIDTH = 400;
-const CARD_HEIGHT = 200;
-const GRID_GAP = 24;
+const CARD_WIDTH = 380;
+const CARD_HEIGHT = 300;
+const GRID_GAP = 20;
 
 interface GridCellProps {
   columnIndex: number;
@@ -139,7 +139,7 @@ export const ContestList: React.FC = () => {
   const CARD_HEIGHT_WITH_GAP = CARD_HEIGHT + GRID_GAP;
 
   const VirtualizedGrid: React.FC<AutoSizerProps> = ({ width, height }) => {
-    const columnCount = Math.floor(width / CARD_WIDTH_WITH_GAP);
+    const columnCount = Math.max(1, Math.floor((width + GRID_GAP) / CARD_WIDTH_WITH_GAP));
     const rowCount = Math.ceil(displayedContests.length / columnCount);
 
     return (
@@ -163,9 +163,25 @@ export const ContestList: React.FC = () => {
               style={{
                 ...style,
                 padding: GRID_GAP / 2,
+                width: CARD_WIDTH_WITH_GAP,
+                height: CARD_HEIGHT_WITH_GAP,
               }}
             >
-              <ContestCard contest={contest} />
+              <Box
+                sx={{
+                  height: '100%',
+                  '& > *': {
+                    height: '100%',
+                    '& .MuiPaper-root': {
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    },
+                  },
+                }}
+              >
+                <ContestCard contest={contest} />
+              </Box>
             </div>
           );
         }}
@@ -174,7 +190,7 @@ export const ContestList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ position: 'relative', height: 'calc(100vh - 50px)' }}>
+    <Box sx={{ position: 'relative', height: 'calc(100vh - 10px)' }}>
       <Box sx={{ height: '100%' }}>
         <AutoSizer>
           {({ height, width }: AutoSizerProps) => (
