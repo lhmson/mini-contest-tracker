@@ -1,6 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import axios from 'axios';
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 
@@ -108,4 +108,4 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-export default app; 
+module.exports = app; 
