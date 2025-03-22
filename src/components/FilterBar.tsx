@@ -4,41 +4,42 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  Typography,
+  TextField,
   Paper,
-  Stack,
+  Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import {
   setPlatforms,
-  setShowPastContests,
-  setShowUpcomingContests,
+  setTimeRange,
+  setSearchQuery,
+  Platform,
+  TimeRange,
 } from '../store/slices/filtersSlice';
-import { Platform, ContestFilters } from '../types/contest';
-
-const platforms: { value: Platform; label: string }[] = [
-  { value: 'codeforces', label: 'Codeforces' },
-  { value: 'codechef', label: 'CodeChef' },
-  { value: 'leetcode', label: 'LeetCode' },
-];
 
 export const FilterBar: React.FC = () => {
   const dispatch = useDispatch();
-  const filters = useSelector(
+  const { platforms, timeRange, searchQuery } = useSelector(
     (state: RootState) => state.filters
-  ) as ContestFilters;
-  const {
-    platforms: selectedPlatforms,
-    showPastContests,
-    showUpcomingContests,
-  } = filters;
+  ) as { platforms: Platform[]; timeRange: TimeRange[]; searchQuery: string };
 
-  const handlePlatformToggle = (platform: Platform) => {
-    const newPlatforms = selectedPlatforms.includes(platform)
-      ? selectedPlatforms.filter((p: Platform) => p !== platform)
-      : [...selectedPlatforms, platform];
+  const handlePlatformChange = (platform: Platform) => {
+    const newPlatforms = platforms.includes(platform)
+      ? platforms.filter((p: Platform) => p !== platform)
+      : [...platforms, platform];
     dispatch(setPlatforms(newPlatforms));
+  };
+
+  const handleTimeRangeChange = (range: TimeRange) => {
+    const newTimeRange = timeRange.includes(range)
+      ? timeRange.filter((r) => r !== range)
+      : [...timeRange, range];
+    dispatch(setTimeRange(newTimeRange));
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setSearchQuery(event.target.value));
   };
 
   return (
@@ -46,57 +47,81 @@ export const FilterBar: React.FC = () => {
       <Typography variant='h6' gutterBottom>
         Filters
       </Typography>
-      <Stack spacing={2}>
-        <Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <FormGroup>
           <Typography variant='subtitle1' gutterBottom>
             Platforms
           </Typography>
-          <FormGroup>
-            {platforms.map((platform) => (
-              <FormControlLabel
-                key={platform.value}
-                control={
-                  <Checkbox
-                    checked={selectedPlatforms.includes(platform.value)}
-                    onChange={() => handlePlatformToggle(platform.value)}
-                  />
-                }
-                label={platform.label}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={platforms.includes('leetcode')}
+                onChange={() => handlePlatformChange('leetcode')}
               />
-            ))}
-          </FormGroup>
-        </Box>
+            }
+            label='LeetCode'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={platforms.includes('codeforces')}
+                onChange={() => handlePlatformChange('codeforces')}
+              />
+            }
+            label='Codeforces'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={platforms.includes('atcoder')}
+                onChange={() => handlePlatformChange('atcoder')}
+              />
+            }
+            label='AtCoder'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={platforms.includes('codechef')}
+                onChange={() => handlePlatformChange('codechef')}
+              />
+            }
+            label='CodeChef'
+          />
+        </FormGroup>
 
-        <Box>
+        <FormGroup>
           <Typography variant='subtitle1' gutterBottom>
             Contest Status
           </Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showUpcomingContests}
-                  onChange={(e) =>
-                    dispatch(setShowUpcomingContests(e.target.checked))
-                  }
-                />
-              }
-              label='Show Upcoming Contests'
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showPastContests}
-                  onChange={(e) =>
-                    dispatch(setShowPastContests(e.target.checked))
-                  }
-                />
-              }
-              label='Show Past Contests'
-            />
-          </FormGroup>
-        </Box>
-      </Stack>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={timeRange.includes('upcoming')}
+                onChange={() => handleTimeRangeChange('upcoming')}
+              />
+            }
+            label='Show Upcoming Contests'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={timeRange.includes('past')}
+                onChange={() => handleTimeRangeChange('past')}
+              />
+            }
+            label='Show Past Contests'
+          />
+        </FormGroup>
+
+        <TextField
+          label='Search Contests'
+          variant='outlined'
+          value={searchQuery}
+          onChange={handleSearchChange}
+          fullWidth
+        />
+      </Box>
     </Paper>
   );
 };

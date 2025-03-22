@@ -1,10 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ContestFilters, Platform } from '../../types/contest';
 
-const initialState: ContestFilters = {
-  platforms: ['codeforces', 'codechef', 'leetcode'],
-  showPastContests: true,
-  showUpcomingContests: true,
+export type TimeRange = 'upcoming' | 'past' | null;
+export type Platform = 'leetcode' | 'codeforces' | 'atcoder' | 'codechef';
+
+interface FiltersState {
+  platforms: Platform[];
+  timeRange: TimeRange[];
+  searchQuery: string;
+}
+
+const initialState: FiltersState = {
+  platforms: ['leetcode', 'codeforces', 'atcoder', 'codechef'],
+  timeRange: ['upcoming', 'past'],
+  searchQuery: '',
 };
 
 const filtersSlice = createSlice({
@@ -14,29 +22,20 @@ const filtersSlice = createSlice({
     setPlatforms: (state, action: PayloadAction<Platform[]>) => {
       state.platforms = action.payload;
     },
-    togglePlatform: (state, action: PayloadAction<Platform>) => {
-      const platform = action.payload;
-      const index = state.platforms.indexOf(platform);
-      if (index === -1) {
-        state.platforms.push(platform);
-      } else {
-        state.platforms.splice(index, 1);
-      }
+    setTimeRange: (state, action: PayloadAction<TimeRange[]>) => {
+      state.timeRange = action.payload;
     },
-    setShowPastContests: (state, action: PayloadAction<boolean>) => {
-      state.showPastContests = action.payload;
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
     },
-    setShowUpcomingContests: (state, action: PayloadAction<boolean>) => {
-      state.showUpcomingContests = action.payload;
+    clearFilters: (state) => {
+      state.platforms = ['leetcode', 'codeforces', 'atcoder', 'codechef'];
+      state.timeRange = ['upcoming', 'past'];
+      state.searchQuery = '';
     },
   },
 });
 
-export const {
-  setPlatforms,
-  togglePlatform,
-  setShowPastContests,
-  setShowUpcomingContests,
-} = filtersSlice.actions;
-
+export const { setPlatforms, setTimeRange, setSearchQuery, clearFilters } =
+  filtersSlice.actions;
 export default filtersSlice.reducer;
