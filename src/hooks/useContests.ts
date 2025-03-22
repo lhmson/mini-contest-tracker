@@ -9,19 +9,14 @@ import {
 } from '../store/slices/contestsSlice';
 import { Contest } from '../types/contest';
 import { getContestStatus } from '../utils/timeUtils';
-
-interface ContestFilters {
-  platforms: string[];
-  timeRange: 'all' | 'upcoming' | 'past';
-  searchQuery: string;
-}
+import { FiltersState } from '../store/slices/filtersSlice';
 
 export const useContests = () => {
   const dispatch = useDispatch();
   const { contests, loading, error } = useSelector(
     (state: RootState) => state.contests
   );
-  const filters = useSelector((state: RootState) => state.filters);
+  const filters = useSelector((state: RootState) => state.filters) as FiltersState;
 
   useEffect(() => {
     const loadContests = async () => {

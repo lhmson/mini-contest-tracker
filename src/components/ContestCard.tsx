@@ -23,7 +23,7 @@ interface ContestCardProps {
   contest: Contest;
 }
 
-const platformColors = {
+const platformColors: Record<string, string> = {
   codeforces: '#1F8ACB',
   codechef: '#5B4638',
   leetcode: '#FFA116',
@@ -83,7 +83,7 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
               label={contest.platform}
               size="small"
               sx={{
-                backgroundColor: platformColors[contest.platform],
+                backgroundColor: platformColors[contest.platform] || '#666',
                 color: 'white',
                 mb: 1,
               }}

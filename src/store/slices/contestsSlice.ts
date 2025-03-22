@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { Contest } from '../../types/contest';
-import { fetchContests as fetchContestsService } from '../../services/contestService';
+import { fetchAllContests as fetchContestsService } from '../../services/contestService';
 
 interface ContestsState {
   contests: Contest[];

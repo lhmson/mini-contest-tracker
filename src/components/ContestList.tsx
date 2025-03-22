@@ -8,7 +8,8 @@ import { AppDispatch, RootState } from '../store';
 import { fetchContests } from '../store/slices/contestsSlice';
 import { ContestCard } from './ContestCard';
 import { Contest } from '../types/contest';
-import { isUpcoming, isPast, getContestStatus } from '../utils/timeUtils';
+import { getContestStatus } from '../utils/timeUtils';
+import { FiltersState } from '../store/slices/filtersSlice';
 
 const CONTESTS_PER_PAGE = 12;
 const CARD_WIDTH = 380;
@@ -31,9 +32,7 @@ export const ContestList: React.FC = () => {
   const { contests, loading, error } = useSelector(
     (state: RootState) => state.contests
   );
-  const { platforms, timeRange, searchQuery } = useSelector(
-    (state: RootState) => state.filters
-  ) as { platforms: string[]; timeRange: string[]; searchQuery: string };
+  const filters = useSelector((state: RootState) => state.filters) as FiltersState;
 
   const [displayedContests, setDisplayedContests] = useState<Contest[]>([]);
   const [page, setPage] = useState(1);
@@ -45,25 +44,26 @@ export const ContestList: React.FC = () => {
     dispatch(fetchContests());
   }, [dispatch]);
 
-  // Filter contests based on current filters
-  useEffect(() => {
-    const filtered = contests.filter((contest) => {
+  const filterContests = (contests: Contest[]) => {
+    return contests.filter((contest) => {
       // Platform filter
-      if (platforms.length > 0 && !platforms.includes(contest.platform)) {
+      if (filters.platforms.length > 0 && !filters.platforms.includes(contest.platform)) {
         return false;
       }
 
       // Time range filter
-      if (timeRange.length > 0) {
-        const status = getContestStatus(contest.startTime, contest.endTime);
-        if (!timeRange.includes(status)) {
-          return false;
-        }
+      const status = getContestStatus(contest.startTime, contest.endTime);
+      if (filters.timeRange === 'upcoming' && status !== 'Upcoming') {
+        return false;
       }
+      if (filters.timeRange === 'past' && status !== 'Past') {
+        return false;
+      }
+      // If timeRange is 'all', include all contests
 
       // Search query filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase();
         return (
           contest.name.toLowerCase().includes(query) ||
           contest.platform.toLowerCase().includes(query)
@@ -72,35 +72,19 @@ export const ContestList: React.FC = () => {
 
       return true;
     });
+  };
 
-    // Reset pagination when filters change
+  // Filter contests based on current filters
+  useEffect(() => {
+    const filtered = filterContests(contests);
     setPage(1);
     setDisplayedContests(filtered.slice(0, CONTESTS_PER_PAGE));
-  }, [contests, platforms, timeRange, searchQuery]);
+  }, [contests, filters]);
 
   // Load more contests when scrolling to the bottom
   useEffect(() => {
     if (inView && !loading) {
-      const filtered = contests.filter((contest) => {
-        if (platforms.length > 0 && !platforms.includes(contest.platform)) {
-          return false;
-        }
-        if (timeRange.length > 0) {
-          const status = getContestStatus(contest.startTime, contest.endTime);
-          if (!timeRange.includes(status)) {
-            return false;
-          }
-        }
-        if (searchQuery) {
-          const query = searchQuery.toLowerCase();
-          return (
-            contest.name.toLowerCase().includes(query) ||
-            contest.platform.toLowerCase().includes(query)
-          );
-        }
-        return true;
-      });
-
+      const filtered = filterContests(contests);
       const startIndex = page * CONTESTS_PER_PAGE;
       const endIndex = startIndex + CONTESTS_PER_PAGE;
       const newContests = filtered.slice(startIndex, endIndex);
@@ -110,7 +94,7 @@ export const ContestList: React.FC = () => {
         setPage((prev) => prev + 1);
       }
     }
-  }, [inView, loading, contests, platforms, timeRange, searchQuery, page]);
+  }, [inView, loading, contests, filters, page]);
 
   if (error) {
     return (
