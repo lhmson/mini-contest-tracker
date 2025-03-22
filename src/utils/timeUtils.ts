@@ -26,11 +26,11 @@ export const formatContestTime = (date: string): string => {
   return format(new Date(date), 'MMM dd, yyyy HH:mm');
 };
 
-export const isContestUpcoming = (startTime: string): boolean => {
+export const isUpcoming = (startTime: string): boolean => {
   return isAfter(new Date(startTime), new Date());
 };
 
-export const isContestPast = (endTime: string): boolean => {
+export const isPast = (endTime: string): boolean => {
   return isBefore(new Date(endTime), new Date());
 };
 
@@ -49,4 +49,14 @@ export const getContestStatus = (
   } else {
     return 'upcoming';
   }
+};
+
+export const formatDuration = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours} hours ${remainingMinutes} minutes`;
+};
+
+export const formatDate = (dateString: string): string => {
+  return format(new Date(dateString), 'MMM dd, yyyy HH:mm');
 };
