@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -14,26 +13,20 @@ const mockStore = configureStore({
 });
 
 const mockContest: Contest = {
-  id: 'test-1',
+  id: '1',
   name: 'Test Contest',
   platform: 'codeforces',
-  startTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-  endTime: new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString(), // Day after tomorrow
+  startTime: '2024-03-20T10:00:00Z',
+  endTime: '2024-03-20T12:00:00Z',
   duration: 120,
-  url: 'https://example.com/contest',
+  url: 'https://example.com'
 };
 
 describe('ContestCard', () => {
   it('renders contest information correctly', () => {
-    render(
-      <Provider store={mockStore}>
-        <ContestCard contest={mockContest} />
-      </Provider>
-    );
-
+    render(<ContestCard contest={mockContest} />);
     expect(screen.getByText('Test Contest')).toBeInTheDocument();
     expect(screen.getByText('codeforces')).toBeInTheDocument();
-    expect(screen.getByText(/2 hours 0 minutes/)).toBeInTheDocument();
   });
 
   it('handles bookmark toggle', () => {

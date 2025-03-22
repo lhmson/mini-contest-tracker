@@ -7,6 +7,8 @@ const CODECHEF_API =
 const LEETCODE_API = 'https://leetcode.com/graphql';
 const PROXY_URL = 'http://localhost:3001/api';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
 interface CodeforcesContest {
   id: number;
   name: string;
@@ -29,68 +31,47 @@ interface LeetCodeResponse {
   };
 }
 
-export const fetchContests = async (): Promise<Contest[]> => {
+export const fetchAllContests = async (): Promise<Contest[]> => {
   try {
-    // Fetch from Codeforces
-    const codeforcesResponse = await fetch(
-      'https://codeforces.com/api/contest.list'
-    );
-    const codeforcesData = await codeforcesResponse.json();
-    const codeforcesContests = codeforcesData.result
-      .filter((contest: CodeforcesContest) => contest.phase === 'BEFORE')
-      .map((contest: CodeforcesContest) => ({
-        id: `cf-${contest.id}`,
-        name: contest.name,
-        platform: 'codeforces',
-        startTime: new Date(contest.startTimeSeconds * 1000).toISOString(),
-        endTime: new Date(
-          (contest.startTimeSeconds + contest.durationSeconds) * 1000
-        ).toISOString(),
-        duration: contest.durationSeconds / 60,
-        url: `https://codeforces.com/contests/${contest.id}`,
-      }));
+    const [codeforcesContests, codechefContests, leetcodeContests] = await Promise.all([
+      fetchCodeforcesContests(),
+      fetchCodechefContests(),
+      fetchLeetcodeContests()
+    ]);
 
-    // Fetch from LeetCode using proxy
-    const leetcodeQuery = {
-      query: `
-        query {
-          allContests {
-            title
-            titleSlug
-            startTime
-            duration
-            isVirtual
-          }
-        }
-      `,
-    };
-
-    const leetcodeResponse = await fetch(`${PROXY_URL}/leetcode`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(leetcodeQuery),
-    });
-
-    const leetcodeData = (await leetcodeResponse.json()) as LeetCodeResponse;
-    const leetcodeContests = leetcodeData.data.allContests
-      .filter((contest: LeetCodeContest) => !contest.isVirtual)
-      .map((contest: LeetCodeContest) => ({
-        id: `lc-${contest.titleSlug}`,
-        name: contest.title,
-        platform: 'leetcode',
-        startTime: new Date(contest.startTime * 1000).toISOString(),
-        endTime: new Date(
-          (contest.startTime + contest.duration) * 1000
-        ).toISOString(),
-        duration: contest.duration / 60,
-        url: `https://leetcode.com/contest/${contest.titleSlug}`,
-      }));
-
-    return [...codeforcesContests, ...leetcodeContests];
+    return [...codeforcesContests, ...codechefContests, ...leetcodeContests];
   } catch (error) {
     console.error('Error fetching contests:', error);
+    throw error;
+  }
+};
+
+export const fetchCodeforcesContests = async (): Promise<Contest[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/contests/codeforces`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Codeforces contests:', error);
+    return [];
+  }
+};
+
+export const fetchCodechefContests = async (): Promise<Contest[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/contests/codechef`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching CodeChef contests:', error);
+    return [];
+  }
+};
+
+export const fetchLeetcodeContests = async (): Promise<Contest[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/contests/leetcode`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching LeetCode contests:', error);
     return [];
   }
 };

@@ -1,55 +1,44 @@
 import { format, differenceInMinutes, isBefore, isAfter } from 'date-fns';
 
-export const formatTimeRemaining = (startTime: string): string => {
-  const now = new Date();
-  const contestStart = new Date(startTime);
-  const minutesRemaining = differenceInMinutes(contestStart, now);
-
-  if (minutesRemaining < 0) {
-    return 'Contest has started';
-  }
-
-  const days = Math.floor(minutesRemaining / (24 * 60));
-  const hours = Math.floor((minutesRemaining % (24 * 60)) / 60);
-  const minutes = minutesRemaining % 60;
-
-  if (days > 0) {
-    return `${days}d ${hours}h ${minutes}m`;
-  } else if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
-  }
-};
-
-export const formatContestTime = (date: string): string => {
-  return format(new Date(date), 'MMM dd, yyyy HH:mm');
-};
-
-export const isUpcoming = (startTime: string): boolean => {
+export const isContestUpcoming = (startTime: string) => {
   return isAfter(new Date(startTime), new Date());
 };
 
-export const isPast = (endTime: string): boolean => {
+export const isContestPast = (endTime: string) => {
   return isBefore(new Date(endTime), new Date());
 };
 
-export const getContestStatus = (
-  startTime: string,
-  endTime: string
-): 'upcoming' | 'ongoing' | 'past' => {
+export const formatTimeRemaining = (startTime: string) => {
   const now = new Date();
   const contestStart = new Date(startTime);
-  const contestEnd = new Date(endTime);
-
-  if (isBefore(contestEnd, now)) {
-    return 'past';
-  } else if (isBefore(contestStart, now) && isAfter(contestEnd, now)) {
-    return 'ongoing';
-  } else {
-    return 'upcoming';
-  }
+  const minutes = differenceInMinutes(contestStart, now);
+  
+  if (minutes < 0) return 'Started';
+  
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  if (hours === 0) return `${remainingMinutes}m`;
+  return `${hours}h ${remainingMinutes}m`;
 };
+
+export const formatContestTime = (time: string) => {
+  return format(new Date(time), 'MMM dd, yyyy HH:mm');
+};
+
+export const getContestStatus = (startTime: string, endTime: string) => {
+  const now = new Date();
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  
+  if (isAfter(start, now)) return 'Upcoming';
+  if (isBefore(end, now)) return 'Past';
+  return 'Ongoing';
+};
+
+// Alias exports for backward compatibility
+export const isUpcoming = isContestUpcoming;
+export const isPast = isContestPast;
 
 export const formatDuration = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);

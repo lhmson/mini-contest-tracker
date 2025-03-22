@@ -7,18 +7,21 @@ import {
   setLoading,
   setError,
 } from '../store/slices/contestsSlice';
-import { Contest, ContestFilters } from '../types/contest';
-import { isContestUpcoming, isContestPast } from '../utils/timeUtils';
+import { Contest } from '../types/contest';
+import { getContestStatus } from '../utils/timeUtils';
+
+interface ContestFilters {
+  platforms: string[];
+  timeRange: 'all' | 'upcoming' | 'past';
+  searchQuery: string;
+}
 
 export const useContests = () => {
   const dispatch = useDispatch();
   const { contests, loading, error } = useSelector(
     (state: RootState) => state.contests
   );
-  const filters = useSelector(
-    (state: RootState) => state.filters
-  ) as ContestFilters;
-  const { platforms, showPastContests, showUpcomingContests } = filters;
+  const filters = useSelector((state: RootState) => state.filters);
 
   useEffect(() => {
     const loadContests = async () => {
@@ -43,20 +46,39 @@ export const useContests = () => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  const filteredContests = contests.filter((contest: Contest) => {
-    const platformMatch = platforms.includes(contest.platform);
-    const timeMatch =
-      (showUpcomingContests && isContestUpcoming(contest.startTime)) ||
-      (showPastContests && isContestPast(contest.endTime));
-    return platformMatch && timeMatch;
-  });
+  const filterContests = (contests: Contest[], filters: ContestFilters) => {
+    return contests.filter((contest) => {
+      // Platform filter
+      if (filters.platforms.length > 0 && !filters.platforms.includes(contest.platform)) {
+        return false;
+      }
+
+      // Time range filter
+      const status = getContestStatus(contest.startTime, contest.endTime);
+      if (filters.timeRange === 'upcoming' && status !== 'Upcoming') return false;
+      if (filters.timeRange === 'past' && status !== 'Past') return false;
+
+      // Search query filter
+      if (filters.searchQuery) {
+        const searchLower = filters.searchQuery.toLowerCase();
+        return (
+          contest.name.toLowerCase().includes(searchLower) ||
+          contest.platform.toLowerCase().includes(searchLower)
+        );
+      }
+
+      return true;
+    });
+  };
+
+  const filteredContests = filterContests(contests, filters as ContestFilters);
 
   const upcomingContests = filteredContests.filter((contest: Contest) =>
-    isContestUpcoming(contest.startTime)
+    getContestStatus(contest.startTime, contest.endTime) === 'Upcoming'
   );
 
   const pastContests = filteredContests.filter((contest: Contest) =>
-    isContestPast(contest.endTime)
+    getContestStatus(contest.startTime, contest.endTime) === 'Past'
   );
 
   return {
