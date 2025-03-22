@@ -41,12 +41,22 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
   };
 
   const status = getContestStatus(contest.startTime, contest.endTime);
-  const statusColor =
-    status === 'upcoming'
-      ? 'success'
-      : status === 'ongoing'
-        ? 'warning'
-        : 'default';
+  
+  const getStatusColor = () => {
+    if (status === 'Upcoming') return 'primary';
+    if (status === 'Ongoing') return 'success';
+    return 'default';
+  };
+
+  const getTimeDisplay = () => {
+    if (status === 'Upcoming') {
+      return `Starts in ${formatTimeRemaining(contest.startTime)}`;
+    }
+    if (status === 'Ongoing') {
+      return 'Ongoing';
+    }
+    return 'Ended';
+  };
 
   return (
     <Card sx={{ mb: 2, position: 'relative' }}>
@@ -60,7 +70,14 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
         >
           <Box sx={{ flex: 1 }}>
             <Typography variant="h6" component="div" gutterBottom>
-              {contest.name}
+              <Link
+                href={contest.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+              >
+                {contest.name}
+              </Link>
             </Typography>
             <Chip
               label={contest.platform}
@@ -78,14 +95,9 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
               Duration: {Math.floor(contest.duration / 60)} hours{' '}
               {contest.duration % 60} minutes
             </Typography>
-            {status === 'upcoming' && (
-              <Typography variant="body2" color="primary" gutterBottom>
-                Time remaining: {formatTimeRemaining(contest.startTime)}
-              </Typography>
-            )}
             <Chip
               label={status}
-              color={statusColor}
+              color={getStatusColor()}
               size="small"
               sx={{ mr: 1 }}
             />
@@ -103,6 +115,14 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
           <IconButton onClick={handleBookmarkToggle} color="primary">
             {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
           </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography
+            variant="body2"
+            color={status === 'Upcoming' ? 'primary.main' : 'text.secondary'}
+          >
+            {getTimeDisplay()}
+          </Typography>
         </Box>
         <Link
           href={contest.url}

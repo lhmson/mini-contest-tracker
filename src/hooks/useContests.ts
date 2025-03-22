@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { fetchContests } from '../services/contestService';
+import { fetchAllContests } from '../services/contestService';
 import {
   setContests,
   setLoading,
@@ -25,28 +25,21 @@ export const useContests = () => {
 
   useEffect(() => {
     const loadContests = async () => {
+      dispatch(setLoading(true));
       try {
-        dispatch(setLoading(true));
-        const fetchedContests = await fetchContests();
-        dispatch(setContests(fetchedContests));
-      } catch (error) {
-        dispatch(
-          setError(
-            error instanceof Error ? error.message : 'Failed to fetch contests'
-          )
-        );
+        const data = await fetchAllContests();
+        dispatch(setContests(data));
+      } catch (err) {
+        dispatch(setError('Failed to fetch contests'));
       } finally {
         dispatch(setLoading(false));
       }
     };
 
     loadContests();
-    // Refresh contests every 5 minutes
-    const interval = setInterval(loadContests, 5 * 60 * 1000);
-    return () => clearInterval(interval);
   }, [dispatch]);
 
-  const filterContests = (contests: Contest[], filters: ContestFilters) => {
+  const filterContests = (contests: Contest[]) => {
     return contests.filter((contest) => {
       // Platform filter
       if (filters.platforms.length > 0 && !filters.platforms.includes(contest.platform)) {
@@ -71,7 +64,7 @@ export const useContests = () => {
     });
   };
 
-  const filteredContests = filterContests(contests, filters as ContestFilters);
+  const filteredContests = filterContests(contests);
 
   const upcomingContests = filteredContests.filter((contest: Contest) =>
     getContestStatus(contest.startTime, contest.endTime) === 'Upcoming'
