@@ -12,14 +12,20 @@ export const formatTimeRemaining = (startTime: string) => {
   const now = new Date();
   const contestStart = new Date(startTime);
   const minutes = differenceInMinutes(contestStart, now);
-  
+
   if (minutes < 0) return 'Started';
-  
-  const hours = Math.floor(minutes / 60);
+
+  const days = Math.floor(minutes / (24 * 60));
+  const hours = Math.floor((minutes % (24 * 60)) / 60);
   const remainingMinutes = minutes % 60;
-  
-  if (hours === 0) return `${remainingMinutes}m`;
-  return `${hours}h ${remainingMinutes}m`;
+
+  if (days > 0) {
+    return `Starts in ${days}d ${hours}h ${remainingMinutes}m`;
+  }
+  if (hours > 0) {
+    return `Starts in ${hours}h ${remainingMinutes}m`;
+  }
+  return `Starts in ${remainingMinutes}m`;
 };
 
 export const formatContestTime = (time: string) => {
@@ -30,7 +36,7 @@ export const getContestStatus = (startTime: string, endTime: string) => {
   const now = new Date();
   const start = new Date(startTime);
   const end = new Date(endTime);
-  
+
   if (isAfter(start, now)) return 'Upcoming';
   if (isBefore(end, now)) return 'Past';
   return 'Ongoing';
