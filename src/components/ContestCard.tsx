@@ -45,8 +45,8 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
     status === 'upcoming'
       ? 'success'
       : status === 'ongoing'
-      ? 'warning'
-      : 'default';
+        ? 'warning'
+        : 'default';
 
   return (
     <Card sx={{ mb: 2, position: 'relative' }}>
@@ -59,55 +59,55 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
           }}
         >
           <Box sx={{ flex: 1 }}>
-            <Typography variant='h6' component='div' gutterBottom>
+            <Typography variant="h6" component="div" gutterBottom>
               {contest.name}
             </Typography>
             <Chip
               label={contest.platform}
-              size='small'
+              size="small"
               sx={{
                 backgroundColor: platformColors[contest.platform],
                 color: 'white',
                 mb: 1,
               }}
             />
-            <Typography variant='body2' color='text.secondary' gutterBottom>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
               Start: {formatContestTime(contest.startTime)}
             </Typography>
-            <Typography variant='body2' color='text.secondary' gutterBottom>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
               Duration: {Math.floor(contest.duration / 60)} hours{' '}
               {contest.duration % 60} minutes
             </Typography>
             {status === 'upcoming' && (
-              <Typography variant='body2' color='primary' gutterBottom>
+              <Typography variant="body2" color="primary" gutterBottom>
                 Time remaining: {formatTimeRemaining(contest.startTime)}
               </Typography>
             )}
             <Chip
               label={status}
               color={statusColor}
-              size='small'
+              size="small"
               sx={{ mr: 1 }}
             />
             {contest.solutionUrl && (
               <Link
                 href={contest.solutionUrl}
-                target='_blank'
-                rel='noopener noreferrer'
+                target="_blank"
+                rel="noopener noreferrer"
                 sx={{ ml: 1 }}
               >
                 Solution Video
               </Link>
             )}
           </Box>
-          <IconButton onClick={handleBookmarkToggle} color='primary'>
+          <IconButton onClick={handleBookmarkToggle} color="primary">
             {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
           </IconButton>
         </Box>
         <Link
           href={contest.url}
-          target='_blank'
-          rel='noopener noreferrer'
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{ mt: 1, display: 'block' }}
         >
           View Contest

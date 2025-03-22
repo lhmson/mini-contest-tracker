@@ -81,16 +81,16 @@ export const ReminderForm: React.FC = () => {
 
   return (
     <Paper sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant='h5' gutterBottom>
+      <Typography variant="h5" gutterBottom>
         Set Contest Reminder
       </Typography>
-      <Box component='form' onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel>Select Contest</InputLabel>
           <Select
             value={selectedContestId}
             onChange={(e) => setSelectedContestId(e.target.value)}
-            label='Select Contest'
+            label="Select Contest"
           >
             {upcomingContests.map((contest) => (
               <MenuItem key={contest.id} value={contest.id}>
@@ -105,7 +105,7 @@ export const ReminderForm: React.FC = () => {
           <Select
             value={reminderTime}
             onChange={(e) => setReminderTime(Number(e.target.value))}
-            label='Reminder Time'
+            label="Reminder Time"
           >
             <MenuItem value={15}>15 minutes before</MenuItem>
             <MenuItem value={30}>30 minutes before</MenuItem>
@@ -115,8 +115,8 @@ export const ReminderForm: React.FC = () => {
           </Select>
         </FormControl>
 
-        <FormControl component='fieldset' sx={{ mb: 2 }}>
-          <Typography variant='subtitle1' gutterBottom>
+        <FormControl component="fieldset" sx={{ mb: 2 }}>
+          <Typography variant="subtitle1" gutterBottom>
             Notification Type
           </Typography>
           <RadioGroup
@@ -125,8 +125,8 @@ export const ReminderForm: React.FC = () => {
               setNotificationType(e.target.value as 'email' | 'sms')
             }
           >
-            <FormControlLabel value='email' control={<Radio />} label='Email' />
-            <FormControlLabel value='sms' control={<Radio />} label='SMS' />
+            <FormControlLabel value="email" control={<Radio />} label="Email" />
+            <FormControlLabel value="sms" control={<Radio />} label="SMS" />
           </RadioGroup>
         </FormControl>
 
@@ -144,18 +144,18 @@ export const ReminderForm: React.FC = () => {
         />
 
         {error && (
-          <Alert severity='error' sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
         {success && (
-          <Alert severity='success' sx={{ mb: 2 }}>
+          <Alert severity="success" sx={{ mb: 2 }}>
             Reminder set successfully!
           </Alert>
         )}
 
-        <Button type='submit' variant='contained' color='primary'>
+        <Button type="submit" variant="contained" color="primary">
           Set Reminder
         </Button>
       </Box>

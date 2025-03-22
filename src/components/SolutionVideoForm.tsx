@@ -63,16 +63,16 @@ export const SolutionVideoForm: React.FC = () => {
 
   return (
     <Paper sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant='h5' gutterBottom>
+      <Typography variant="h5" gutterBottom>
         Add Solution Video
       </Typography>
-      <Box component='form' onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel>Select Contest</InputLabel>
           <Select
             value={selectedContestId}
             onChange={(e) => setSelectedContestId(e.target.value)}
-            label='Select Contest'
+            label="Select Contest"
           >
             {pastContests.map((contest: Contest) => (
               <MenuItem key={contest.id} value={contest.id}>
@@ -84,25 +84,25 @@ export const SolutionVideoForm: React.FC = () => {
 
         <TextField
           fullWidth
-          label='YouTube Video URL'
+          label="YouTube Video URL"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
           sx={{ mb: 2 }}
         />
 
         {error && (
-          <Alert severity='error' sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
         {success && (
-          <Alert severity='success' sx={{ mb: 2 }}>
+          <Alert severity="success" sx={{ mb: 2 }}>
             Solution video link added successfully!
           </Alert>
         )}
 
-        <Button type='submit' variant='contained' color='primary'>
+        <Button type="submit" variant="contained" color="primary">
           Add Solution Video
         </Button>
       </Box>

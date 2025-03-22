@@ -74,12 +74,12 @@ export const FilterBar: React.FC = () => {
         },
       }}
     >
-      <Typography variant='h6' gutterBottom>
+      <Typography variant="h6" gutterBottom>
         Filters
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <FormGroup>
-          <Typography variant='subtitle1' gutterBottom>
+          <Typography variant="subtitle1" gutterBottom>
             Platforms
           </Typography>
           <FormControlLabel
@@ -89,7 +89,7 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handlePlatformChange('leetcode')}
               />
             }
-            label='LeetCode'
+            label="LeetCode"
           />
           <FormControlLabel
             control={
@@ -98,7 +98,7 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handlePlatformChange('codeforces')}
               />
             }
-            label='Codeforces'
+            label="Codeforces"
           />
           <FormControlLabel
             control={
@@ -107,7 +107,7 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handlePlatformChange('atcoder')}
               />
             }
-            label='AtCoder'
+            label="AtCoder"
           />
           <FormControlLabel
             control={
@@ -116,12 +116,12 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handlePlatformChange('codechef')}
               />
             }
-            label='CodeChef'
+            label="CodeChef"
           />
         </FormGroup>
 
         <FormGroup>
-          <Typography variant='subtitle1' gutterBottom>
+          <Typography variant="subtitle1" gutterBottom>
             Contest Status
           </Typography>
           <FormControlLabel
@@ -131,7 +131,7 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handleTimeRangeChange('upcoming')}
               />
             }
-            label='Show Upcoming Contests'
+            label="Show Upcoming Contests"
           />
           <FormControlLabel
             control={
@@ -140,13 +140,13 @@ export const FilterBar: React.FC = () => {
                 onChange={() => handleTimeRangeChange('past')}
               />
             }
-            label='Show Past Contests'
+            label="Show Past Contests"
           />
         </FormGroup>
 
         <TextField
-          label='Search Contests'
-          variant='outlined'
+          label="Search Contests"
+          variant="outlined"
           value={searchInput}
           onChange={handleSearchChange}
           fullWidth

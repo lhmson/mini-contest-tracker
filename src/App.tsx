@@ -11,7 +11,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <ThemeWrapper>
         <CssBaseline />
-        <Container maxWidth='lg'>
+        <Container maxWidth="lg">
           <Box sx={{ py: 4 }}>
             <Box sx={{ display: 'flex', gap: 3 }}>
               <Box sx={{ width: 280 }}>

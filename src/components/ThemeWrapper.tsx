@@ -9,7 +9,9 @@ interface ThemeWrapperProps {
 }
 
 export const ThemeWrapper: React.FC<ThemeWrapperProps> = ({ children }) => {
-  const theme = useSelector((state: RootState) => (state.userPreferences as UserPreferences).theme);
+  const theme = useSelector(
+    (state: RootState) => (state.userPreferences as UserPreferences).theme
+  );
   const darkTheme = createTheme({
     palette: {
       mode: theme,
