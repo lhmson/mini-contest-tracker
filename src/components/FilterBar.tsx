@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   FormGroup,
@@ -17,12 +17,20 @@ import {
   Platform,
   TimeRange,
 } from '../store/slices/filtersSlice';
+import { useDebounce } from 'use-debounce';
 
 export const FilterBar: React.FC = () => {
   const dispatch = useDispatch();
   const { platforms, timeRange, searchQuery } = useSelector(
     (state: RootState) => state.filters
   ) as { platforms: Platform[]; timeRange: TimeRange[]; searchQuery: string };
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [debouncedSearch] = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    dispatch(setSearchQuery(debouncedSearch));
+  }, [debouncedSearch, dispatch]);
 
   const handlePlatformChange = (platform: Platform) => {
     const newPlatforms = platforms.includes(platform)
@@ -39,11 +47,33 @@ export const FilterBar: React.FC = () => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchQuery(event.target.value));
+    setSearchInput(event.target.value);
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
+    <Paper
+      sx={{
+        p: 2,
+        mb: 3,
+        position: 'sticky',
+        top: 16,
+        maxHeight: 'calc(100vh - 32px)',
+        overflowY: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: 'rgba(0, 0, 0, 0.2)',
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: 'rgba(0, 0, 0, 0.3)',
+        },
+      }}
+    >
       <Typography variant='h6' gutterBottom>
         Filters
       </Typography>
@@ -117,7 +147,7 @@ export const FilterBar: React.FC = () => {
         <TextField
           label='Search Contests'
           variant='outlined'
-          value={searchQuery}
+          value={searchInput}
           onChange={handleSearchChange}
           fullWidth
         />
