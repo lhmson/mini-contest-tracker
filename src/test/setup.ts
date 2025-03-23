@@ -1,12 +1,21 @@
 import '@testing-library/jest-dom';
-import { expect, afterEach } from 'vitest';
+import { vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
-import matchers from '@testing-library/jest-dom/matchers';
+import React from 'react';
+import { LinkProps } from '@mui/material';
 
-// Extend Vitest's expect method with methods from react-testing-library
-expect.extend(matchers);
+// Mock Material-UI components globally
+vi.mock('@mui/material', async () => {
+  const actual = await vi.importActual('@mui/material');
+  return {
+    ...actual,
+    Link: ({ children, ...props }: LinkProps) =>
+      React.createElement('a', props, children),
+  };
+});
 
-// Cleanup after each test case (e.g. clearing jsdom)
+// Clean up after each test
 afterEach(() => {
   cleanup();
-}); 
+  vi.clearAllMocks();
+});

@@ -41,7 +41,7 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
   };
 
   const status = getContestStatus(contest.startTime, contest.endTime);
-  
+
   const getStatusColor = () => {
     if (status === 'Upcoming') return 'primary';
     if (status === 'Ongoing') return 'success';
@@ -116,7 +116,13 @@ export const ContestCard: React.FC<ContestCardProps> = ({ contest }) => {
             {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
           </IconButton>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <Typography
             variant="body2"
             color={status === 'Upcoming' ? 'primary.main' : 'text.secondary'}

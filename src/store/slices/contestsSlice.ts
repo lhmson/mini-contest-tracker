@@ -58,10 +58,18 @@ const contestsSlice = createSlice({
     toggleBookmark: (state, action: PayloadAction<string>) => {
       const contestId = action.payload;
       const index = state.bookmarkedContests.indexOf(contestId);
+      const contest = state.contests.find((c) => c.id === contestId);
+
       if (index === -1) {
         state.bookmarkedContests.push(contestId);
+        if (contest) {
+          contest.isBookmarked = true;
+        }
       } else {
         state.bookmarkedContests.splice(index, 1);
+        if (contest) {
+          contest.isBookmarked = false;
+        }
       }
       saveBookmarkedContests(state.bookmarkedContests);
     },

@@ -1,9 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import contestsReducer, { toggleBookmark, setContests } from '../contestsSlice';
+import contestsReducer, {
+  toggleBookmark,
+  setContests,
+} from '../slices/contestsSlice';
+import { Platform } from '../../types/contest';
 
 describe('contestsSlice', () => {
   const initialState = {
     contests: [],
+    bookmarkedContests: [],
     loading: false,
     error: null,
   };
@@ -11,8 +16,9 @@ describe('contestsSlice', () => {
   const mockContest = {
     id: '1',
     name: 'Test Contest',
-    platform: 'Codeforces',
+    platform: 'Codeforces' as Platform,
     startTime: new Date().toISOString(),
+    endTime: new Date(Date.now() + 7200000).toISOString(),
     duration: 7200,
     url: 'https://test.com',
     isBookmarked: false,
@@ -34,14 +40,17 @@ describe('contestsSlice', () => {
     const state = {
       ...initialState,
       contests: [mockContest],
+      bookmarkedContests: [],
     };
 
     // Toggle bookmark on
     const actualOn = contestsReducer(state, toggleBookmark(mockContest.id));
     expect(actualOn.contests[0].isBookmarked).toBe(true);
+    expect(actualOn.bookmarkedContests).toContain(mockContest.id);
 
     // Toggle bookmark off
     const actualOff = contestsReducer(actualOn, toggleBookmark(mockContest.id));
     expect(actualOff.contests[0].isBookmarked).toBe(false);
+    expect(actualOff.bookmarkedContests).not.toContain(mockContest.id);
   });
 });
